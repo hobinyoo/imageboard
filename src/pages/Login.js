@@ -22,7 +22,7 @@ const Login = (props) => {
     }
     return (
         <React.Fragment>
-            <Grid width="50%" margin="auto">
+            <Grid>
                 <Grid>
                     <Text type="heading" size="20px" bold>로그인 페이지</Text>
                 </Grid>

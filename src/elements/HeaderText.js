@@ -24,8 +24,11 @@ const P = styled.p`
   transition: ease all .1s;
   font-size: ${(props) => props.size};
   font-weight: ${(props) => (props.bold? "700" : "400")};
+  @media only screen and (max-width: 768px) {
+    font-size: ${(props) => (props.size? "20px" : "")};
+  }
   @media only screen and (max-width: 500px) {
-    font-size: ${(props) => (props.size? "18px": "24px")};
+    font-size: ${(props) => (props.size? "18px" : "")};
   }
 `;
 

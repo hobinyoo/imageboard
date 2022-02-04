@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const Gird = (props) => {
+const ListGrid = (props) => {
   const { is_flex, width, padding, margin, bg, children, center} = props;
 
   const styles = {
@@ -19,9 +19,9 @@ const Gird = (props) => {
   )
 }
 
-Gird.defaultProps = {
+ListGrid.defaultProps = {
   children: null,
-  width: "100%",
+  width: "100%", 
   padding: false,
   margin: false,
   bg: false,
@@ -33,6 +33,7 @@ const GridBox = styled.div`
   width: ${(props) => props.width};
   height: 100%;
   box-sizing: border-box;
+  border-radius: 10px;
   ${(props) => (props.padding ? `padding: ${props.padding};` : "")}
   ${(props) => (props.margin ? `margin: ${props.margin};` : "")}
   ${(props) => (props.bg ? `background-color: ${props.bg};` : "")}
@@ -42,7 +43,10 @@ const GridBox = styled.div`
       : ""}
  
   ${(props) => props.center ? `text-align: center;` : ""}
-  
+  @media only screen and (max-width: 768px) {
+    width: ${(props) => (props.width? "70%" : "")};
+    margin : ${(props) => (props.margin? "10px auto 0px auto" : "")};
+  }
 `;
 
-export default Gird;
+export default ListGrid;

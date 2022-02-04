@@ -25,7 +25,7 @@ const Signup = (props) => {
   };
   return (
     <React.Fragment>
-      <Grid padding="16px" width="50%" margin="auto">
+      <Grid>
         <Text size="32px" bold>
           회원가입
         </Text>

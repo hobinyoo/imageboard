@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const Button = (props) => {
+const HeaderB = (props) => {
   const { text, _onClick, is_float, children, margin, width, padding } = props;
 
   if (is_float) {
@@ -25,7 +25,7 @@ const Button = (props) => {
   );
 };
 
-Button.defaultProps = {
+HeaderB.defaultProps = {
   text: false,
   children: null,
   _onClick: () => {},
@@ -64,4 +64,4 @@ const FloatButton = styled.button`
   border-radius: 50px;
 `;
 
-export default Button;
+export default HeaderB;

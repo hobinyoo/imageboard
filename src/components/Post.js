@@ -1,5 +1,5 @@
 import React from "react";
-import {Grid, Image, Text, Button} from "../elements";
+import {Grid, Image, Text, Button, ListGrid} from "../elements";
 
 
 
@@ -7,7 +7,7 @@ const Post = (props) => {
 
     return (
       <React.Fragment>
-        <Grid width="50%" margin="auto">
+        <ListGrid width="50%" margin="20px auto 0px auto" bg="#CFB997" >
           <Grid is_flex padding="16px">
             <Grid is_flex width="auto">
               <Image shape="circle" src={props.src} />
@@ -26,7 +26,7 @@ const Post = (props) => {
           <Grid padding="16px">
             <Text margin="0px" bold>댓글 {props.comment_cnt}개</Text>
           </Grid>
-        </Grid>
+        </ListGrid>
       </React.Fragment>
     );
 }
