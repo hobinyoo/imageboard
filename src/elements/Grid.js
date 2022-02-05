@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 const Gird = (props) => {
-  const { is_flex, width, padding, margin, bg, children, center} = props;
+  const { is_flex, width, padding, margin, bg, children, center, _onClick} = props;
 
   const styles = {
     is_flex: is_flex,
@@ -14,7 +14,7 @@ const Gird = (props) => {
   }
   return (
     <React.Fragment>
-      <GridBox {...styles}>{children}</GridBox>
+      <GridBox {...styles} onClick={_onClick}>{children}</GridBox>
     </React.Fragment>
   )
 }
@@ -26,6 +26,7 @@ Gird.defaultProps = {
   margin: false,
   bg: false,
   center: false,
+  _onClick: () => {} //defaultProps는 어떤함수이다!
 }
 
 //..styles의 props

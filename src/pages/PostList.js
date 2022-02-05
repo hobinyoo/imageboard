@@ -3,6 +3,7 @@ import Post from "../components/Post";
 import { useSelector, useDispatch } from "react-redux";
 import { actionCreators as postActions } from "../redux/modules/post";
 import InfinityScroll from "../shared/InfinityScroll";
+import { Grid } from "../elements";
 
 const PostList = (props) => {
     const dispatch = useDispatch();
@@ -12,32 +13,58 @@ const PostList = (props) => {
     const paging = useSelector((state) => state.post.paging)
 
 
-    React.useEffect(() => {
-        console.log('in list');
+    const { history } = props;
 
-        dispatch(postActions.getPostFB());
+    React.useEffect(() => {
+        if(post_list.length < 2){
+           dispatch(postActions.getPostFB());
+        }
+        
 
     }, []);
 
     return (
         <React.Fragment>
+          <Grid>
+            {/* <Post/> */}
             <InfinityScroll
-                callNext={()=>{
-                    dispatch(postActions.getPostFB(paging.next));
-                }}
-                is_next={paging.next? true:false}
-                loading={is_loading}
+              callNext={() => {
+                dispatch(postActions.getPostFB(paging.next));
+              }}
+              is_next={paging.next ? true : false}
+              loading={is_loading}
             >
-                {post_list.map((p, idx) => {
-                    if (user_info && p.user_info.user_id === user_info.uid) {
-                        return <Post key={p.id} {...p} is_me />
-                    } else { }
-                    return <Post key={p.id} {...p} />
-                })}
+              {post_list.map((p, idx) => {
+                if (p.user_info.user_id === user_info?.uid) {
+                  return (
+                    <Grid
+                    
+                      key={p.id}
+                      _onClick={() => {
+                        history.push(`/post/${p.id}`);
+                      }}
+                    >
+                      <Post key={p.id} {...p} is_me />
+                    </Grid>
+                  );
+                } else {
+                  return (
+                    <Grid
+                      key={p.id}
+                      
+                      _onClick={() => {
+                        history.push(`/post/${p.id}`);
+                      }}
+                    >
+                      <Post {...p} />
+                    </Grid>
+                  );
+                }
+              })}
             </InfinityScroll>
-
+          </Grid>
         </React.Fragment>
-    )
+      );
 }
 
 export default PostList;
