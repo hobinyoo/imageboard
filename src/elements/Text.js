@@ -2,14 +2,18 @@ import React from "react";
 import styled from "styled-components";
 
 const Text = (props) => {
-  const { bold, color, size, children, center } = props;
+  const { bold, color, size, children, center} = props;
 
-  const styles = {bold: bold, color: color, size: size, center: center};
+  const styles = { bold: bold, color: color, size: size, center: center };
+  
+  
   return (
-      <P {...styles}>
-          {children}
-      </P>
+    <P {...styles}>
+      {children}
+    </P>
   )
+
+  
 };
 
 Text.defaultProps = {
@@ -25,10 +29,11 @@ const P = styled.p`
   color: ${(props) => props.color};
   transition: ease all .1s;
   font-size: ${(props) => props.size};
-  font-weight: ${(props) => (props.bold? "700" : "400")};
+  font-weight: ${(props) => (props.bold ? "700" : "400")};
   @media only screen and (max-width: 500px) {
    
   }
 `;
+
 
 export default Text;

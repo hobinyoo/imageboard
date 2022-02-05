@@ -5,13 +5,14 @@ import PostList from './pages/PostList'
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Header from './components/Header';
-import {Grid} from "./elements";
+import PostWrite from './components/postWrite';
+import {Grid, Button} from "./elements";
 import './App.css';
 import { ConnectedRouter } from "connected-react-router";
 import { history } from "./redux/configureStore";
 import {useDispatch} from "react-redux";
 import {actionCreators as userActions} from "./redux/modules/user";
-
+import Permit from "./shared/Permit";
 import {apiKey} from "./shared/firebase";
 
 function App() {
@@ -35,8 +36,12 @@ function App() {
           <Route path="/" exact component={PostList} />
           <Route path="/login" exact component={Login} />
           <Route path="/signup" exact component={Signup}/>
+          <Route path="/write" exact component={PostWrite}/>
         </ConnectedRouter>
       </Grid>
+      <Permit>
+        <Button is_float text="+" _onClick={() => {history.push('/write');}}></Button>
+      </Permit>
     </React.Fragment>
   );
 }

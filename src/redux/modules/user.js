@@ -25,7 +25,7 @@ const loginFB = (id, pwd) => {
                 .signInWithEmailAndPassword(id, pwd)
                 .then((user) => {
                     console.log(user);
-
+                    console.log(user.user.uid)
                     dispatch(
                         setUser({
                             user_name: user.user.displayName,
@@ -34,7 +34,7 @@ const loginFB = (id, pwd) => {
                             uid: user.user.uid,
                         })
                     );
-
+                    
                     history.push("/");
                 })
                 .catch((error) => {

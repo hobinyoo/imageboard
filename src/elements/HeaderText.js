@@ -2,11 +2,11 @@ import React from "react";
 import styled from "styled-components";
 
 const HeaderText = (props) => {
-  const { bold, color, size, children } = props;
+  const { bold, color, size, children, _onClick } = props;
 
   const styles = {bold: bold, color: color, size: size};
   return (
-      <P {...styles}>
+      <P {...styles} onClick={_onClick}>
           {children}
       </P>
   )
@@ -17,6 +17,7 @@ HeaderText.defaultProps = {
   bold: false,
   color: "#222831",
   size: "14px",
+  _onClick: () => {},
 };
 
 const P = styled.p`

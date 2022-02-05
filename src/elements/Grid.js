@@ -21,14 +21,14 @@ const Gird = (props) => {
 
 Gird.defaultProps = {
   children: null,
-  width: "100%",
+  width: "100%", //밖에 50%가 먹었음!
   padding: false,
   margin: false,
   bg: false,
   center: false,
 }
 
-
+//..styles의 props
 const GridBox = styled.div`
   width: ${(props) => props.width};
   height: 100%;

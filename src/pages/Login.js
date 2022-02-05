@@ -1,8 +1,9 @@
 import React from "react";
-import { Button, Grid, Input, Text } from "../elements";
+import { Button, Grid, Input, Text, ListGrid } from "../elements";
 import { setCookie } from "../shared/Cookie";
 import {actionCreators as userActions} from "../redux/modules/user";
 import { useDispatch } from "react-redux";
+import { emailCheck } from "../shared/common";
 
 const Login = (props) => {
     const dispatch = useDispatch();
@@ -18,11 +19,22 @@ const Login = (props) => {
     }
 
     const login = () => {
+        if(id === "" || pwd === ""){
+            window.alert("아이디 혹은 비밀번호가 공란입니다! 입력해주세요!");
+            return;
+          }
+      
+          if(!emailCheck(id)){
+            window.alert("이메일 형식이 맞지 않습니다!");
+            return;
+          }
         dispatch(userActions.loginFB(id, pwd));
     }
+
+
     return (
         <React.Fragment>
-            <Grid>
+            <ListGrid width="50%" margin="auto">
                 <Grid>
                     <Text type="heading" size="20px" bold>로그인 페이지</Text>
                 </Grid>
@@ -36,9 +48,7 @@ const Login = (props) => {
                     console.log("로그인 했어!");
                     login();
                   }}>로그인</Button>
-
-
-            </Grid>
+            </ListGrid>
 
         </React.Fragment>
     )

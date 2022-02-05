@@ -44,7 +44,7 @@ const GridBox = styled.div`
  
   ${(props) => props.center ? `text-align: center;` : ""}
   @media only screen and (max-width: 768px) {
-    width: ${(props) => (props.width? "70%" : "")};
+    width: ${(props) => (props.width? "80%" : "")};
     margin : ${(props) => (props.margin? "10px auto 0px auto" : "")};
   }
 `;
