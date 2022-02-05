@@ -34,12 +34,9 @@ const Header = (props) => {
               history.push("/login")
             }}
           ></Button>
-          <Button
-            text="알림"
-            _onClick={() => {
-              history.push("/signup")
-            }} 
-          ></Button>
+          <Button text="알림" _onClick={() => {
+              history.push('/noti');
+            }}></Button>
           <Button text="로그아웃"
               _onClick={() => {
                 dispatch(userActions.logoutFB());

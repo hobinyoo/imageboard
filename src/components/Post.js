@@ -1,19 +1,19 @@
 import React from "react";
 import {Grid, Image, Text, Button, ListGrid} from "../elements";
-
+import { history } from "../redux/configureStore";
 
 
 const Post = (props) => {
-
     return (
       <React.Fragment>
         <ListGrid width="50%" margin="20px auto 0px auto" bg="#CFB997" >
-          <Grid is_flex padding="16px">
+        <Grid is_flex padding="16px">
             <Grid is_flex width="auto">
               <Image shape="circle" src={props.src} />
               <Text bold>{props.user_info.user_name}</Text>
             </Grid>
             <Grid is_flex width="auto">
+              {props.is_me && (<Button width="auto" padding="4px" margin="4px" _onClick={() => {history.push(`/write/${props.id}`)}}>수정</Button>)}
               <Text>{props.insert_dt}</Text>
             </Grid>
           </Grid>
