@@ -5,5 +5,6 @@ import Input from "./Input";
 import Button from "./Button";
 import HeaderText from "./HeaderText"
 import ListGrid from "./ListGrid"
+import Spinner from "./Spinner";
 
-export {Grid, Image, Text, Input, Button, HeaderText, ListGrid};
+export {Grid, Image, Text, Input, Button, HeaderText, ListGrid, Spinner};

@@ -1,5 +1,6 @@
 import React from "react";
 import _ from "lodash";
+import { Spinner } from "../elements";
 
 const InfinityScroll = (props) => {
     const { children, callNext, is_next, loading } = props;
@@ -45,6 +46,7 @@ const InfinityScroll = (props) => {
     return (
         <React.Fragment>
             {children}
+            {is_next && (<Spinner/>)}
         </React.Fragment>
     );
 };
