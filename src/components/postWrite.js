@@ -13,6 +13,7 @@ const PostWrite = (props) => {
   const post_list = useSelector((state) => state.post.list);
 
   const post_id = props.match.params.id;
+  //params 아이디 가져오기!
   const is_edit = post_id ? true : false;
 
   const { history } = props;
@@ -20,7 +21,7 @@ const PostWrite = (props) => {
   let _post = is_edit ? post_list.find((p) => p.id === post_id) : null;
 
   const [contents, setContents] = React.useState(_post ? _post.contents : "");
-
+  //usestate의 기본값은 _post.contents
   React.useEffect(() => {
     if (is_edit && !_post) {
       console.log("포스트 정보가 없어요!");
@@ -44,6 +45,7 @@ const PostWrite = (props) => {
 
   const editPost = () => {
     dispatch(postActions.editPostFB(post_id, {contents: contents}));
+    // 바뀐값 contents(오른쪽)을 contents란 이름으로 넘겨줌
   }
 
   if (!is_login) {

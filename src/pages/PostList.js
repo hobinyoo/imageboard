@@ -11,7 +11,7 @@ const PostList = (props) => {
     const user_info = useSelector((state) => state.user.user);
     const is_loading = useSelector((state) => state.post.is_loading);
     const paging = useSelector((state) => state.post.paging)
-
+ 
 
     const { history } = props;
 
@@ -22,6 +22,7 @@ const PostList = (props) => {
         
 
     }, []);
+  
 
     return (
         <React.Fragment>
@@ -40,21 +41,22 @@ const PostList = (props) => {
                     <Grid
                     
                       key={p.id}
-                      _onClick={() => {
-                        history.push(`/post/${p.id}`);
-                      }}
+                      // _onClick={() => {
+                      //   history.push(`/post/${p.id}`);
+                      // }}
                     >
                       <Post key={p.id} {...p} is_me />
                     </Grid>
                   );
+                //로그인 했을 때와 안했을 때 분리하기!  
                 } else {
                   return (
                     <Grid
                       key={p.id}
                       
-                      _onClick={() => {
-                        history.push(`/post/${p.id}`);
-                      }}
+                      // _onClick={() => {
+                      //   history.push(`/post/${p.id}`);
+                      // }}
                     >
                       <Post {...p} />
                     </Grid>

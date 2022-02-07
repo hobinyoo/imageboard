@@ -1,4 +1,3 @@
-
 import React from "react";
 import {Grid, Text, Image} from "../elements";
 

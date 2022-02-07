@@ -1,9 +1,16 @@
 import React from "react";
 import {Grid, Image, Text, Button, ListGrid} from "../elements";
 import { history } from "../redux/configureStore";
-
+import { useDispatch} from "react-redux";
+import { actionCreators as postActions } from "../redux/modules/post";
 
 const Post = (props) => {
+    const dispatch = useDispatch();
+   
+    const deletePost = () => {
+      dispatch(postActions.deletePostFB(props.id))
+    }
+    
     return (
       <React.Fragment>
         <ListGrid width="50%" margin="20px auto 0px auto" bg="#CFB997" >
@@ -13,7 +20,11 @@ const Post = (props) => {
               <Text bold>{props.user_info.user_name}</Text>
             </Grid>
             <Grid is_flex width="auto">
-              {props.is_me && (<Button width="auto" padding="4px" margin="4px" _onClick={() => {history.push(`/write/${props.id}`)}}>수정</Button>)}
+              {props.is_me && (<Button width="auto" padding="4px" 
+              //porps_is_me는 default로 지정!
+              margin="4px" _onClick={() => {history.push(`/write/${props.id}`)}}>수정</Button>)}
+              {props.is_me && (<Button width="auto" padding="4px" 
+              margin="4px" _onClick={deletePost}>삭제</Button>)}
               <Text>{props.insert_dt}</Text>
             </Grid>
           </Grid>

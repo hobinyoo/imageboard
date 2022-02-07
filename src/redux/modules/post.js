@@ -10,6 +10,7 @@ const SET_POST = "SET_POST";
 const ADD_POST = "ADD_POST";
 const EDIT_POST = "EDIT_POST";
 const LOADING = "LOADING";
+const DELETE_POST = "DELETE_POST";
 
 const setPost = createAction(SET_POST, (post_list, paging) => ({ post_list, paging }));
 const addPost = createAction(ADD_POST, (post) => ({ post }));
@@ -18,6 +19,7 @@ const editPost = createAction(EDIT_POST, (post_id, post) => ({
   post,
 }));
 const loading = createAction(LOADING, (is_loading) => ({ is_loading }));
+const deletePost = createAction(DELETE_POST, (post_index) => ({ post_index }));
 
 const initialState = {
   list: [],
@@ -38,6 +40,28 @@ const initialPost = {
   insert_dt: moment().format("YYYY-MM-DD hh:mm:ss"),
 };
 
+const deletePostFB = (post_id) => {
+  return function (dispatch, getState, { history }) {
+     
+    const postDB = firestore.collection("post");
+    const _post_idx = getState().post.list.findIndex((p) => p.id === post_id);
+
+    postDB
+    .doc(post_id)
+    .delete()
+    .then(() => {
+      dispatch(deletePost(_post_idx));
+  }).catch((error) => {
+      console.error("Error removing document: ", error);
+  });
+  }
+};
+
+
+
+
+// dispatch(postActions.editPostFB(post_id, {contents: contents}));
+// 바뀐값 contents(오른쪽)을 contents란 이름으로 post에 넘겨줌
 const editPostFB = (post_id = null, post = {}) => {
   return function (dispatch, getState, { history }) {
     if (!post_id) {
@@ -50,7 +74,7 @@ const editPostFB = (post_id = null, post = {}) => {
     const _post_idx = getState().post.list.findIndex((p) => p.id === post_id);
     const _post = getState().post.list[_post_idx];
 
-    console.log(_post);
+ 
 
     const postDB = firestore.collection("post");
 
@@ -69,7 +93,6 @@ const editPostFB = (post_id = null, post = {}) => {
       const _upload = storage
         .ref(`images/${user_id}_${new Date().getTime()}`)
         .putString(_image, "data_url");
-
       _upload.then((snapshot) => {
         snapshot.ref
           .getDownloadURL()
@@ -122,7 +145,7 @@ const addPostFB = (contents = "") => {
     const _upload = storage
       .ref(`images/${user_info.user_id}_${new Date().getTime()}`)
       .putString(_image, "data_url");
-
+    console.log(_upload)
     _upload.then((snapshot) => {
       snapshot.ref
         .getDownloadURL()
@@ -165,7 +188,7 @@ const getPostFB = (start = null, size = 3) => {
     if (_paging.start && !_paging.next) {
       return;
     }
-    
+
     // 가져오기 시작~!
     dispatch(loading(true));
 
@@ -175,7 +198,7 @@ const getPostFB = (start = null, size = 3) => {
     let query = postDB.orderBy("insert_dt", "desc")
 
     // 시작점 정보가 있으면? 시작점부터 가져오도록 쿼리 수정!
-    if(start){
+    if (start) {
       query = query.startAt(start);
     }
 
@@ -183,56 +206,23 @@ const getPostFB = (start = null, size = 3) => {
     // 3개씩 끊어서 보여준다고 할 때, 4개를 가져올 수 있으면? 앗 다음 페이지가 있겠네하고 알 수 있으니까요.
     // 만약 4개 미만이라면? 다음 페이지는 없겠죠! :)
     query
-    .limit(size + 1)
-    .get()
-    .then(docs => {
-      let post_list = [];
+      .limit(size + 1)
+      .get()
+      .then(docs => {
+        let post_list = [];
 
-      //pasing 정보 만들어주기
-      let paging = {
-        start: docs.docs[0],
-        next: docs.docs.length === size+1? docs.docs[docs.docs.length - 1] : null,
-        size: size,
-      };
+        //pasing 정보 만들어주기
+        let paging = {
+          start: docs.docs[0],
+          next: docs.docs.length === size + 1 ? docs.docs[docs.docs.length - 1] : null,
+          size: size,
+        };
 
-      docs.forEach((doc) => {
-        let _post = doc.data();
+        docs.forEach((doc) => {
+          let _post = doc.data();
 
-        // ['commenct_cnt', 'contents', ..]
-        let post = Object.keys(_post).reduce(
-          (acc, cur) => {
-            if (cur.indexOf("user_") !== -1) {
-              return {
-                ...acc,
-                user_info: { ...acc.user_info, [cur]: _post[cur] },
-              };
-            }
-            return { ...acc, [cur]: _post[cur] };
-          },
-          { id: doc.id, user_info: {} }
-        );
-
-        post_list.push(post);
-        //현재 post_list에 4개가 들어갔다.
-      });
-
-        post_list.pop();
-
-      dispatch(setPost(post_list, paging));
-    });
-  };
-};
-
-const getOnePostFB = (id) => {
-  return function(dispatch, getState, {history}) {
-    const postDB = firestore.collection("post")
-    postDB.doc(id).get().then(doc => {
-        console.log(doc)
-        console.log(doc.data())
-
-        let _post = doc.data();
-
-        let post = Object.keys(_post).reduce(
+          // ['commenct_cnt', 'contents', ..]
+          let post = Object.keys(_post).reduce(
             (acc, cur) => {
               if (cur.indexOf("user_") !== -1) {
                 return {
@@ -244,7 +234,40 @@ const getOnePostFB = (id) => {
             },
             { id: doc.id, user_info: {} }
           );
-          dispatch(setPost([post]))
+
+          post_list.push(post);
+          //현재 post_list에 4개가 들어갔다.
+        });
+
+        post_list.pop();
+
+        dispatch(setPost(post_list, paging));
+      });
+  };
+};
+
+const getOnePostFB = (id) => {
+  return function (dispatch, getState, { history }) {
+    const postDB = firestore.collection("post")
+    postDB.doc(id).get().then(doc => {
+      console.log(doc)
+      console.log(doc.data())
+
+      let _post = doc.data();
+
+      let post = Object.keys(_post).reduce(
+        (acc, cur) => {
+          if (cur.indexOf("user_") !== -1) {
+            return {
+              ...acc,
+              user_info: { ...acc.user_info, [cur]: _post[cur] },
+            };
+          }
+          return { ...acc, [cur]: _post[cur] };
+        },
+        { id: doc.id, user_info: {} }
+      );
+      dispatch(setPost([post]))
     });
   }
 }
@@ -258,17 +281,17 @@ export default handleActions(
 
         //acc 누산된 값 cur은 현재값
         draft.list = draft.list.reduce((acc, cur) => {
-          if(acc.findIndex(a => a.id === cur.id) === -1) {
+          if (acc.findIndex(a => a.id === cur.id) === -1) {
             return [...acc, cur];
           } else {
-            acc[acc.findIndex(a => a.id === cur.id)] = cur; 
+            acc[acc.findIndex(a => a.id === cur.id)] = cur;
             return acc;
           }
           //순번이 나옴 -1은 중복된 값이 x --> 중복처리가 끝났다
-        },[])
+        }, [])
 
 
-        if(action.payload.paging) {
+        if (action.payload.paging) {
           draft.paging = action.payload.paging;
         }
         draft.is_loading = false;
@@ -288,6 +311,14 @@ export default handleActions(
       produce(state, (draft) => {
         draft.is_loading = action.payload.is_loading;
       }),
+
+    [DELETE_POST]: (state, action) =>
+      produce(state, (draft) => {
+
+      draft.list = draft.list.filter((l,idx)=> {
+          return idx !== parseInt(action.payload.post_index)
+        })
+      }),
   },
   initialState
 );
@@ -300,6 +331,7 @@ const actionCreators = {
   addPostFB,
   editPostFB,
   getOnePostFB,
+  deletePostFB,
 };
 
 export { actionCreators };
