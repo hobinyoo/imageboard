@@ -1,9 +1,9 @@
 import { createAction, handleActions } from "redux-actions";
 import { produce } from "immer";
 import { firestore, storage } from "../../shared/firebase";
+import firebase from "firebase/compat/app";
 import "moment";
 import moment from "moment";
-
 import { actionCreators as imageActions } from "./image";
 
 const SET_POST = "SET_POST";
@@ -11,6 +11,7 @@ const ADD_POST = "ADD_POST";
 const EDIT_POST = "EDIT_POST";
 const LOADING = "LOADING";
 const DELETE_POST = "DELETE_POST";
+const LIKE = "LIKE";
 
 const setPost = createAction(SET_POST, (post_list, paging) => ({ post_list, paging }));
 const addPost = createAction(ADD_POST, (post) => ({ post }));
@@ -20,6 +21,7 @@ const editPost = createAction(EDIT_POST, (post_id, post) => ({
 }));
 const loading = createAction(LOADING, (is_loading) => ({ is_loading }));
 const deletePost = createAction(DELETE_POST, (post_index) => ({ post_index }));
+const likePost = createAction(LIKE, (post_index, completed, comment_like) => ({ post_index, completed, comment_like}));
 
 const initialState = {
   list: [],
@@ -37,27 +39,74 @@ const initialPost = {
   image_url: "",
   contents: "",
   comment_cnt: 0,
+  comment_like: 0,
   insert_dt: moment().format("YYYY-MM-DD hh:mm:ss"),
+  completed: false,
+};
+
+const commentLikeFB = (post_id) => {
+  return function (dispatch, getState, { history }) {
+
+    
+    const postDB = firestore.collection("post");
+    const post_list = getState().post.list;
+    const post_index = post_list.findIndex((b) => {
+      return b.id === post_id;
+    })
+    const post_completed = getState().post.list[post_index].completed
+
+    const increment = firebase.firestore.FieldValue.increment(1);
+    const decrement = firebase.firestore.FieldValue.increment(-1);
+    const _post_idx = getState().post.list.findIndex((p) => p.id === post_id);
+
+    const post = getState().post.list.find((l) => l.id === post_id);
+    const is_login = getState().user.user.uid
+    if(post_completed === false ) {
+      postDB
+      .doc(post_id)
+      .update({ comment_like: increment, completed: true })
+      .then(() => {
+        dispatch(
+          likePost(_post_idx, post_completed, {
+            comment_like: parseInt(post.comment_like) + 1,
+          })
+        );
+      }).catch((error) => {
+        console.error("Error removing document: ", error);
+      });
+    } else {
+      postDB
+      .doc(post_id)
+      .update({ comment_like: decrement, completed: false })
+      .then(() => {
+        dispatch(
+          likePost(_post_idx, post_completed,{
+            comment_like: parseInt(post.comment_like) - 1,
+          })
+        );
+      }).catch((error) => {
+        console.error("Error removing document: ", error);
+      });
+    }
+  }
 };
 
 const deletePostFB = (post_id) => {
   return function (dispatch, getState, { history }) {
-     
+
     const postDB = firestore.collection("post");
     const _post_idx = getState().post.list.findIndex((p) => p.id === post_id);
 
     postDB
-    .doc(post_id)
-    .delete()
-    .then(() => {
-      dispatch(deletePost(_post_idx));
-  }).catch((error) => {
-      console.error("Error removing document: ", error);
-  });
+      .doc(post_id)
+      .delete()
+      .then(() => {
+        dispatch(deletePost(_post_idx));
+      }).catch((error) => {
+        console.error("Error removing document: ", error);
+      });
   }
 };
-
-
 
 
 // dispatch(postActions.editPostFB(post_id, {contents: contents}));
@@ -74,7 +123,7 @@ const editPostFB = (post_id = null, post = {}) => {
     const _post_idx = getState().post.list.findIndex((p) => p.id === post_id);
     const _post = getState().post.list[_post_idx];
 
- 
+
 
     const postDB = firestore.collection("post");
 
@@ -220,7 +269,7 @@ const getPostFB = (start = null, size = 3) => {
 
         docs.forEach((doc) => {
           let _post = doc.data();
-
+        
           // ['commenct_cnt', 'contents', ..]
           let post = Object.keys(_post).reduce(
             (acc, cur) => {
@@ -234,6 +283,7 @@ const getPostFB = (start = null, size = 3) => {
             },
             { id: doc.id, user_info: {} }
           );
+        
 
           post_list.push(post);
           //현재 post_list에 4개가 들어갔다.
@@ -271,6 +321,7 @@ const getOnePostFB = (id) => {
     });
   }
 }
+
 
 export default handleActions(
   {
@@ -315,9 +366,33 @@ export default handleActions(
     [DELETE_POST]: (state, action) =>
       produce(state, (draft) => {
 
-      draft.list = draft.list.filter((l,idx)=> {
+        draft.list = draft.list.filter((l, idx) => {
           return idx !== parseInt(action.payload.post_index)
         })
+      }),
+    [LIKE]: (state, action) =>
+      produce(state, (draft) => {
+        console.log(action.payload)
+        let idx = action.payload.post_index
+      
+        if(action.payload.completed === false) {
+          draft.list[idx] = { ...draft.list[idx], ...action.payload.comment_like};
+        } else {
+          draft.list[idx] = { ...draft.list[idx], ...action.payload.comment_like};
+        }
+        
+        draft.list = draft.list.filter((p, idx) => {
+          if (parseInt(action.payload.post_index) === idx) {
+            if (action.payload.completed === false) {
+              return { ...p, completed: true, comment_like:action.payload.comment_like };
+            } else {
+              return { ...p, completed: false, comment_like:action.payload.comment_like };
+            }
+          } else {
+            return p
+          }
+        })   
+      
       }),
   },
   initialState
@@ -332,6 +407,7 @@ const actionCreators = {
   editPostFB,
   getOnePostFB,
   deletePostFB,
+  commentLikeFB,
 };
 
 export { actionCreators };

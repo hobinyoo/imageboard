@@ -1,15 +1,23 @@
 import React from "react";
 import {Grid, Image, Text, Button, ListGrid} from "../elements";
 import { history } from "../redux/configureStore";
-import { useDispatch} from "react-redux";
+import { useDispatch, useSelector} from "react-redux";
 import { actionCreators as postActions } from "../redux/modules/post";
 
 const Post = (props) => {
     const dispatch = useDispatch();
-   
+    const is_login = useSelector((state) => state.user.is_login); 
     const deletePost = () => {
       dispatch(postActions.deletePostFB(props.id))
     }
+
+    const like = () => {
+      if(!is_login){
+        alert("로그인을 해주세요!")
+      }
+      dispatch(postActions.commentLikeFB(props.id))
+    }
+    
     
     return (
       <React.Fragment>
@@ -36,6 +44,7 @@ const Post = (props) => {
           </Grid>
           <Grid padding="16px">
             <Text margin="0px" bold>댓글 {props.comment_cnt}개</Text>
+            <Button margin="0px" bold _onClick={like}>좋아요 {props.comment_like}개</Button>
           </Grid>
         </ListGrid>
       </React.Fragment>
