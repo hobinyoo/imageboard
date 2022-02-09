@@ -1,54 +1,61 @@
-import React from "react";
-import {Grid, Image, Text, Button, ListGrid} from "../elements";
+import React, { useEffect } from "react";
+import { Grid, Image, Text, Button, ListGrid } from "../elements";
 import { history } from "../redux/configureStore";
-import { useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { actionCreators as postActions } from "../redux/modules/post";
+import { realtime } from "../shared/firebase"
+import firebase from "firebase/compat/app";
 
 const Post = (props) => {
-    const dispatch = useDispatch();
-    const is_login = useSelector((state) => state.user.is_login); 
-    const deletePost = () => {
-      dispatch(postActions.deletePostFB(props.id))
+  const dispatch = useDispatch();
+  const is_login = useSelector((state) => state.user.is_login);
+  // const [is_read, setIsRead] = React.useState(true)
+  
+  // const user_id = useSelector((state) => state.user.user.uid);
+  const deletePost = () => {
+    dispatch(postActions.deletePostFB(props.id))
+  }
+  const like = () => {
+    if (!is_login) {
+      alert("로그인을 해주세요!")
     }
+    
+    dispatch(postActions.commentLikeFB(props.id))
+  }
+  
 
-    const like = () => {
-      if(!is_login){
-        alert("로그인을 해주세요!")
-      }
-      dispatch(postActions.commentLikeFB(props.id))
-    }
-    
-    
-    return (
-      <React.Fragment>
-        <ListGrid width="50%" margin="20px auto 0px auto" bg="#CFB997" >
+ 
+
+  return (
+    <React.Fragment>
+      <ListGrid width="50%" margin="20px auto 0px auto" bg="#CFB997" >
         <Grid is_flex padding="16px">
-            <Grid is_flex width="auto">
-              <Image shape="circle" src={props.src} />
-              <Text bold>{props.user_info.user_name}</Text>
-            </Grid>
-            <Grid is_flex width="auto">
-              {props.is_me && (<Button width="auto" padding="4px" 
+          <Grid is_flex width="auto">
+            <Image shape="circle" src={props.src} />
+            <Text bold>{props.user_info.user_name}</Text>
+          </Grid>
+          <Grid is_flex width="auto">
+            {props.is_me && (<Button width="auto" padding="4px"
               //porps_is_me는 default로 지정!
-              margin="4px" _onClick={() => {history.push(`/write/${props.id}`)}}>수정</Button>)}
-              {props.is_me && (<Button width="auto" padding="4px" 
+              margin="4px" _onClick={() => { history.push(`/write/${props.id}`) }}>수정</Button>)}
+            {props.is_me && (<Button width="auto" padding="4px"
               margin="4px" _onClick={deletePost}>삭제</Button>)}
-              <Text>{props.insert_dt}</Text>
-            </Grid>
+            <Text>{props.insert_dt}</Text>
           </Grid>
-          <Grid padding="16px">
-            <Text>{props.contents}</Text>
-          </Grid>
-          <Grid>
-            <Image shape="rectangle" src={props.image_url} />
-          </Grid>
-          <Grid padding="16px">
-            <Text margin="0px" bold>댓글 {props.comment_cnt}개</Text>
-            <Button margin="0px" bold _onClick={like}>좋아요 {props.comment_like}개</Button>
-          </Grid>
-        </ListGrid>
-      </React.Fragment>
-    );
+        </Grid>
+        <Grid padding="16px">
+          <Text>{props.contents}</Text>
+        </Grid>
+        <Grid>
+          <Image shape="rectangle" src={props.image_url} />
+        </Grid>
+        <Grid padding="16px">
+          <Text margin="0px" bold>댓글 {props.comment_cnt}개</Text>
+          <Button margin="0px" bold _onClick={like}>좋아요 {props.comment_like}개</Button>
+        </Grid>
+      </ListGrid>
+    </React.Fragment>
+  );
 }
 
 Post.defaultProps = {

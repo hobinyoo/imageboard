@@ -5,6 +5,8 @@ import firebase from "firebase/compat/app";
 import "moment";
 import moment from "moment";
 import { actionCreators as imageActions } from "./image";
+import { update } from "lodash";
+
 
 const SET_POST = "SET_POST";
 const ADD_POST = "ADD_POST";
@@ -21,7 +23,7 @@ const editPost = createAction(EDIT_POST, (post_id, post) => ({
 }));
 const loading = createAction(LOADING, (is_loading) => ({ is_loading }));
 const deletePost = createAction(DELETE_POST, (post_index) => ({ post_index }));
-const likePost = createAction(LIKE, (post_index, completed, comment_like) => ({ post_index, completed, comment_like}));
+const likePost = createAction(LIKE, (post_index, completed, comment_like) => ({ post_index, completed, comment_like }));
 
 const initialState = {
   list: [],
@@ -47,8 +49,6 @@ const initialPost = {
 const commentLikeFB = (post_id) => {
   return function (dispatch, getState, { history }) {
 
-    
-    const postDB = firestore.collection("post");
     const post_list = getState().post.list;
     const post_index = post_list.findIndex((b) => {
       return b.id === post_id;
@@ -60,33 +60,43 @@ const commentLikeFB = (post_id) => {
     const _post_idx = getState().post.list.findIndex((p) => p.id === post_id);
 
     const post = getState().post.list.find((l) => l.id === post_id);
-    const is_login = getState().user.user.uid
-    if(post_completed === false ) {
+    const _user = getState().user.user;
+    const like = getState().like
+    
+    console.log(like)
+    const postDB = firestore.collection("post");
+    const likeDB = firestore.collection("like");
+  
+    
+    const user_info = {
+      user_id: _user.uid,
+    };
+
+    if (post_completed === false) {
       postDB
       .doc(post_id)
-      .update({ comment_like: increment, completed: true })
-      .then(() => {
+      .update({ comment_like: increment, completed:false })
+      .then(()=>{
         dispatch(
           likePost(_post_idx, post_completed, {
             comment_like: parseInt(post.comment_like) + 1,
+            completed: true
           })
         );
-      }).catch((error) => {
-        console.error("Error removing document: ", error);
-      });
-    } else {
+      })
+    }
+    else {
       postDB
       .doc(post_id)
-      .update({ comment_like: decrement, completed: false })
-      .then(() => {
+      .update({ comment_like: decrement, completed:true})
+      .then(()=>{
         dispatch(
-          likePost(_post_idx, post_completed,{
+          likePost(_post_idx, post_completed, {
             comment_like: parseInt(post.comment_like) - 1,
+            completed: false
           })
         );
-      }).catch((error) => {
-        console.error("Error removing document: ", error);
-      });
+      })
     }
   }
 };
@@ -107,7 +117,6 @@ const deletePostFB = (post_id) => {
       });
   }
 };
-
 
 // dispatch(postActions.editPostFB(post_id, {contents: contents}));
 // 바뀐값 contents(오른쪽)을 contents란 이름으로 post에 넘겨줌
@@ -269,7 +278,7 @@ const getPostFB = (start = null, size = 3) => {
 
         docs.forEach((doc) => {
           let _post = doc.data();
-        
+
           // ['commenct_cnt', 'contents', ..]
           let post = Object.keys(_post).reduce(
             (acc, cur) => {
@@ -283,7 +292,7 @@ const getPostFB = (start = null, size = 3) => {
             },
             { id: doc.id, user_info: {} }
           );
-        
+
 
           post_list.push(post);
           //현재 post_list에 4개가 들어갔다.
@@ -374,25 +383,14 @@ export default handleActions(
       produce(state, (draft) => {
         console.log(action.payload)
         let idx = action.payload.post_index
-      
-        if(action.payload.completed === false) {
-          draft.list[idx] = { ...draft.list[idx], ...action.payload.comment_like};
+
+        if (action.payload.completed === true) {
+          draft.list[idx] = { ...draft.list[idx], ...action.payload.comment_like, ...action.payload.completed };
         } else {
-          draft.list[idx] = { ...draft.list[idx], ...action.payload.comment_like};
+          draft.list[idx] = { ...draft.list[idx], ...action.payload.comment_like, ...action.payload.completed };
         }
-        
-        draft.list = draft.list.filter((p, idx) => {
-          if (parseInt(action.payload.post_index) === idx) {
-            if (action.payload.completed === false) {
-              return { ...p, completed: true, comment_like:action.payload.comment_like };
-            } else {
-              return { ...p, completed: false, comment_like:action.payload.comment_like };
-            }
-          } else {
-            return p
-          }
-        })   
-      
+
+
       }),
   },
   initialState

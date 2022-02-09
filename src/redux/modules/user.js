@@ -33,8 +33,7 @@ const loginFB = (id, pwd) => {
                             user_profile: "",
                             uid: user.user.uid,
                         })
-                    );
-                    
+                    )
                     history.push("/");
                 })
                 .catch((error) => {
@@ -43,6 +42,7 @@ const loginFB = (id, pwd) => {
 
                     console.log(errorCode, errorMessage);
                 });
+                
         });
 
     };
@@ -82,6 +82,7 @@ const signupFB = (id, pwd, user_name) => {
 
 const loginCheckFB = () => {
     return function (dispatch, getState, { history }) {
+        
         auth.onAuthStateChanged((user) => {
             if (user) {
                 dispatch(
