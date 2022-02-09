@@ -39,7 +39,7 @@ const PostWrite = (props) => {
   };
 
   const addPost = () => {
-    dispatch(postActions.addPostFB(contents));
+    dispatch(postActions.addPostFB(contents, display));
   };
 
   const editPost = () => {
@@ -47,8 +47,8 @@ const PostWrite = (props) => {
     // 바뀐값 contents(오른쪽)을 contents란 이름으로 넘겨줌
   }
   
-  const {right, left, down} = props
-  const [display, Setdisplay] = useState()
+  const [display, setDisplay] = useState()
+  
   if (!is_login) {
     return (
       <Grid margin="100px 0px" padding="16px" center>
@@ -87,21 +87,8 @@ const PostWrite = (props) => {
 
         <Grid padding="10px">
         <Style>
-            <input type="radio" value={right} name="rediovalues" />
-            <b>{right}</b>
-            <Image
-              margin="10px 0px 0px 0px"
-              shape="rectangle"
-              width="50%"
-              src={preview ? preview : "http://via.placeholder.com/400x300"}
-            />
-        </Style>
-        </Grid>
-
-        <Grid padding="10px">
-        <Style>
-            <input type="radio" value={left} name="rediovalues" />
-            <b>{left}</b>
+            <input type="radio" value={props.right} name="rediovalues" onChange={(e)=>setDisplay(e.target.value)} />
+            <b>{props.right}</b>
             <Image
               margin="10px 0px 0px 0px"
               marginLeft="auto"
@@ -111,11 +98,24 @@ const PostWrite = (props) => {
             />
         </Style>
         </Grid>
+
+        <Grid padding="10px">
+        <Style>
+            <input type="radio" value={props.left} name="rediovalues" onChange={(e)=>setDisplay(e.target.value)} />
+            <b>{props.left}</b>
+            <Image
+              margin="10px 0px 0px 0px"
+              shape="rectangle"
+              width="50%"
+              src={preview ? preview : "http://via.placeholder.com/400x300"}
+            />
+        </Style>
+        </Grid>
      
         <Grid padding="10px">
         <Style>
-            <input type="radio" value={down} name="rediovalues" />
-            <b>{down}</b>
+            <input type="radio" value={props.down} name="rediovalues" onChange={(e)=>setDisplay(e.target.value)} />
+            <b>{props.down}</b>
             <Image
               margin="10px 0px 0px 0px"
               shape="rectangle"

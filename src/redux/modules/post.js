@@ -16,7 +16,7 @@ const DELETE_POST = "DELETE_POST";
 const LIKE = "LIKE";
 
 const setPost = createAction(SET_POST, (post_list, paging) => ({ post_list, paging }));
-const addPost = createAction(ADD_POST, (post) => ({ post }));
+const addPost = createAction(ADD_POST, (post, display) => ({ post, display }));
 const editPost = createAction(EDIT_POST, (post_id, post) => ({
   post_id,
   post,
@@ -44,6 +44,7 @@ const initialPost = {
   comment_like: 0,
   insert_dt: moment().format("YYYY-MM-DD hh:mm:ss"),
   completed: false,
+  display: ""
 };
 
 const commentLikeFB = (post_id) => {
@@ -168,8 +169,9 @@ const editPostFB = (post_id = null, post = {}) => {
   };
 };
 
-const addPostFB = (contents = "") => {
+const addPostFB = (contents = "", display) => {
   return function (dispatch, getState, { history }) {
+    
     const postDB = firestore.collection("post");
 
     const _user = getState().user.user;
@@ -184,6 +186,7 @@ const addPostFB = (contents = "") => {
       ...initialPost,
       contents: contents,
       insert_dt: moment().format("YYYY-MM-DD hh:mm:ss"),
+      display: display,
     };
 
     const _image = getState().image.preview;
@@ -208,7 +211,7 @@ const addPostFB = (contents = "") => {
             .add({ ...user_info, ..._post, image_url: url })
             .then((doc) => {
               let post = { user_info, ..._post, id: doc.id, image_url: url };
-              dispatch(addPost(post));
+              dispatch(addPost(post,display));
               history.replace("/");
 
               dispatch(imageActions.setPreview(null));
@@ -350,6 +353,7 @@ export default handleActions(
 
     [ADD_POST]: (state, action) =>
       produce(state, (draft) => {
+       
         draft.list.unshift(action.payload.post);
       }),
     [EDIT_POST]: (state, action) =>

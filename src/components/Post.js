@@ -11,7 +11,11 @@ const Post = (props) => {
   const dispatch = useDispatch();
   const is_login = useSelector((state) => state.user.is_login);
   // const [is_read, setIsRead] = React.useState(true)
-
+  const _display = useSelector((state) => state.post.list)
+ 
+  let idx = _display.findIndex((p) => p.id === props.id);
+  const display = _display[idx].display
+  console.log(display)
   const deletePost = () => {
     dispatch(postActions.deletePostFB(props.id))
   }
@@ -29,7 +33,105 @@ const Post = (props) => {
   const toggle = () => {
       setState(!state)
     }
-  
+    if(display==="하단에 이미지 상단에 텍스트") {
+      return(
+        <React.Fragment>
+        <ListGrid width="50%" margin="20px auto 0px auto" bg="#CFB997" >
+          <Grid is_flex padding="16px">
+            <Grid is_flex width="auto">
+              <Image shape="circle" src={props.src} />
+              <Text bold>{props.user_info.user_name}</Text>
+            </Grid>
+            <Grid is_flex width="auto">
+              {props.is_me && (<Button width="auto" padding="4px"
+                //porps_is_me는 default로 지정!
+                margin="4px" _onClick={() => { history.push(`/write/${props.id}`) }}>수정</Button>)}
+              {props.is_me && (<Button width="auto" padding="4px"
+                margin="4px" _onClick={deletePost}>삭제</Button>)}
+              <Text>{props.insert_dt}</Text>
+            </Grid>
+          </Grid>
+          
+          
+          <Grid padding="16px">
+            <Text>{props.contents}</Text>
+          </Grid>
+          
+          <Grid padding="10px">       
+          <Style>
+              <Image
+                margin="10px 0px 0px 0px"
+                shape="rectangle"
+                width="100%"
+                src={props.image_url}
+              />
+          </Style>
+          </Grid>
+         
+         
+         <Grid padding="16px">
+            <Text margin="0px" bold>댓글 {props.comment_cnt}개</Text>
+            <Text margin="0px" bold>좋아요 {props.comment_like}개</Text>
+            <Button margin="0px" bold _onClick={()=>{
+              like()
+              toggle()
+              }}>{state ? `like`:`unlike`}</Button>
+           
+          </Grid>
+        </ListGrid>
+      </React.Fragment>
+      )
+    }
+    
+    if(display==="왼쪽 이미지 오른쪽 텍스트"){
+      return(
+        <React.Fragment>
+        <ListGrid width="50%" margin="20px auto 0px auto" bg="#CFB997" >
+          <Grid is_flex padding="16px">
+            <Grid is_flex width="auto">
+              <Image shape="circle" src={props.src} />
+              <Text bold>{props.user_info.user_name}</Text>
+            </Grid>
+            <Grid is_flex width="auto">
+              {props.is_me && (<Button width="auto" padding="4px"
+                //porps_is_me는 default로 지정!
+                margin="4px" _onClick={() => { history.push(`/write/${props.id}`) }}>수정</Button>)}
+              {props.is_me && (<Button width="auto" padding="4px"
+                margin="4px" _onClick={deletePost}>삭제</Button>)}
+              <Text>{props.insert_dt}</Text>
+            </Grid>
+          </Grid>
+          
+          
+          <Grid padding="16px">
+            <Text>{props.contents}</Text>
+          </Grid>
+          <Grid padding="10px">       
+          <Style>
+              <Image
+                margin="10px 0px 0px 0px"
+                shape="rectangle"
+                width="50%"
+                src={props.image_url}
+              />
+          </Style>
+          </Grid>
+         
+         
+         <Grid padding="16px">
+            <Text margin="0px" bold>댓글 {props.comment_cnt}개</Text>
+            <Text margin="0px" bold>좋아요 {props.comment_like}개</Text>
+            <Button margin="0px" bold _onClick={()=>{
+              like()
+              toggle()
+              }}>{state ? `like`:`unlike`}</Button>
+           
+          </Grid>
+        </ListGrid>
+      </React.Fragment>
+      )
+     
+    }
     return (
     <React.Fragment>
       <ListGrid width="50%" margin="20px auto 0px auto" bg="#CFB997" >
@@ -56,6 +158,7 @@ const Post = (props) => {
         <Style>
             <Image
               margin="10px 0px 0px 0px"
+              marginLeft="auto"
               shape="rectangle"
               width="50%"
               src={props.image_url}
