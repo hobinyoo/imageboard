@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { actionCreators as postActions } from "../redux/modules/post";
 import { realtime } from "../shared/firebase"
 import firebase from "firebase/compat/app";
+import styled from "styled-components";
 
 const Post = (props) => {
   const dispatch = useDispatch();
@@ -46,13 +47,24 @@ const Post = (props) => {
             <Text>{props.insert_dt}</Text>
           </Grid>
         </Grid>
+        
+        
         <Grid padding="16px">
           <Text>{props.contents}</Text>
         </Grid>
-        <Grid>
-          <Image shape="rectangle" src={props.image_url} />
+        <Grid padding="10px">       
+        <Style>
+            <Image
+              margin="10px 0px 0px 0px"
+              shape="rectangle"
+              width="50%"
+              src={props.image_url}
+            />
+        </Style>
         </Grid>
-        <Grid padding="16px">
+       
+       
+       <Grid padding="16px">
           <Text margin="0px" bold>댓글 {props.comment_cnt}개</Text>
           <Text margin="0px" bold>좋아요 {props.comment_like}개</Text>
           <Button margin="0px" bold _onClick={()=>{
@@ -78,4 +90,10 @@ Post.defaultProps = {
   is_me: false,
 };
 
+const Style= styled.div`
+  width: 100%;
+  minHeight: 150px;
+  boxSizing: border-box;
+ 
+`
 export default Post;

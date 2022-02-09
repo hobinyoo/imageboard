@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 const Gird = (props) => {
-  const { is_flex, width, padding, margin, bg, children, center, _onClick} = props;
+  const { is_flex, width, padding, margin, bg, children, center, _onClick } = props;
 
   const styles = {
     is_flex: is_flex,
@@ -26,7 +26,8 @@ Gird.defaultProps = {
   margin: false,
   bg: false,
   center: false,
-  _onClick: () => {} //defaultProps는 어떤함수이다!
+
+  _onClick: () => { } //defaultProps는 어떤함수이다!
 }
 
 //..styles의 props
@@ -41,7 +42,6 @@ const GridBox = styled.div`
     props.is_flex
       ? `display: flex; align-items: center; justify-content: space-between; `
       : ""}
- 
   ${(props) => props.center ? `text-align: center;` : ""}
   
 `;
