@@ -43,7 +43,7 @@ const PostWrite = (props) => {
   };
 
   const editPost = () => {
-    dispatch(postActions.editPostFB(post_id, { contents: contents }));
+    dispatch(postActions.editPostFB(post_id, { contents: contents, display:display }));
     // 바뀐값 contents(오른쪽)을 contents란 이름으로 넘겨줌
   }
   
