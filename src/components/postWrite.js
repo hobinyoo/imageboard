@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Text, Button, Image, Input } from "../elements";
+import { Grid, Text, Button, Image, Input, ListGrid} from "../elements";
 import Upload from "../shared/Upload";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -15,18 +15,16 @@ const PostWrite = (props) => {
   const post_id = props.match.params.id;
   //params 아이디 가져오기!
   const is_edit = post_id ? true : false;
-
   const { history } = props;
-
   let _post = is_edit ? post_list.find((p) => p.id === post_id) : null;
-
+  //post_list에서 param로 가져온 post_id 값!
+ 
   const [contents, setContents] = React.useState(_post ? _post.contents : "");
   //usestate의 기본값은 _post.contents
   React.useEffect(() => {
     if (is_edit && !_post) {
       console.log("포스트 정보가 없어요!");
       history.goBack();
-
       return;
     }
 
@@ -68,6 +66,7 @@ const PostWrite = (props) => {
 
   return (
     <React.Fragment>
+      <ListGrid width="50%" margin="auto" bg="#CFB997" >
       <Grid padding="16px">
         <Text margin="0px" size="36px" bold>
           {is_edit ? "게시글 수정" : "게시글 작성"}
@@ -105,6 +104,7 @@ const PostWrite = (props) => {
           <Button text="게시글 작성" _onClick={addPost}></Button>
         )}
       </Grid>
+      </ListGrid>
     </React.Fragment>
   );
 };

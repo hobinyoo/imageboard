@@ -60,18 +60,9 @@ const commentLikeFB = (post_id) => {
     const _post_idx = getState().post.list.findIndex((p) => p.id === post_id);
 
     const post = getState().post.list.find((l) => l.id === post_id);
-    const _user = getState().user.user;
-    const like = getState().like
-    
-    console.log(like)
-    const postDB = firestore.collection("post");
-    const likeDB = firestore.collection("like");
   
-    
-    const user_info = {
-      user_id: _user.uid,
-    };
-
+    const postDB = firestore.collection("post");
+ 
     if (post_completed === false) {
       postDB
       .doc(post_id)

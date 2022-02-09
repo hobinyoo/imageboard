@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Grid, Image, Text, Button, ListGrid } from "../elements";
 import { history } from "../redux/configureStore";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,11 +10,11 @@ const Post = (props) => {
   const dispatch = useDispatch();
   const is_login = useSelector((state) => state.user.is_login);
   // const [is_read, setIsRead] = React.useState(true)
-  
-  // const user_id = useSelector((state) => state.user.user.uid);
+
   const deletePost = () => {
     dispatch(postActions.deletePostFB(props.id))
   }
+ 
   const like = () => {
     if (!is_login) {
       alert("로그인을 해주세요!")
@@ -22,11 +22,14 @@ const Post = (props) => {
     
     dispatch(postActions.commentLikeFB(props.id))
   }
+
+  const [state, setState] = useState(true);
   
-
- 
-
-  return (
+  const toggle = () => {
+      setState(!state)
+    }
+  
+    return (
     <React.Fragment>
       <ListGrid width="50%" margin="20px auto 0px auto" bg="#CFB997" >
         <Grid is_flex padding="16px">
@@ -51,13 +54,18 @@ const Post = (props) => {
         </Grid>
         <Grid padding="16px">
           <Text margin="0px" bold>댓글 {props.comment_cnt}개</Text>
-          <Button margin="0px" bold _onClick={like}>좋아요 {props.comment_like}개</Button>
+          <Text margin="0px" bold>좋아요 {props.comment_like}개</Text>
+          <Button margin="0px" bold _onClick={()=>{
+            like()
+            toggle()
+            }}>{state ? `like`:`unlike`}</Button>
+         
         </Grid>
       </ListGrid>
     </React.Fragment>
   );
 }
-
+// 좋아요 {props.comment_like}개
 Post.defaultProps = {
   user_info: {
     user_name: "hovinee",

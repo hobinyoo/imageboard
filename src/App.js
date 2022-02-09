@@ -41,6 +41,7 @@ function App() {
           <Route path="/signup" exact component={Signup}/>
           <Route path="/write" exact component={PostWrite}/>
           <Route path="/write/:id" exact component={PostWrite}/>
+          {/* 수정을 할때는 write id값이 필요하다 */}
           <Route path="/post/:id" exact component={PostDetail}/>
           <Route path="/noti" exact component={Notification}/>
         </ConnectedRouter>
