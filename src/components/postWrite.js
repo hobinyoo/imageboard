@@ -69,7 +69,7 @@ const PostWrite = (props) => {
 
   return (
     <React.Fragment>
-      <ListGrid width="50%" margin="auto" bg="#CFB997" >
+      <ListGrid width="50%" margin="20px auto 0px auto" bg="#CFB997" >
         <Grid padding="16px">
           <Text margin="0px" size="36px" bold>
             {is_edit ? "게시글 수정" : "게시글 작성"}

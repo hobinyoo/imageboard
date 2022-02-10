@@ -24,6 +24,7 @@ const CommentWrite = (props) => {
 
     // 파이어스토어에 추가합니다.
     dispatch(commentActions.addCommentFB(post_id, comment_text));
+    //params의 id값과 comment 값을 넘겨줌!
   };
 
   return (

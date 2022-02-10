@@ -21,7 +21,7 @@ const ListGrid = (props) => {
 
 ListGrid.defaultProps = {
   children: null,
-  width: "100%", 
+  width: false, 
   padding: false,
   margin: false,
   bg: false,
@@ -34,6 +34,7 @@ const GridBox = styled.div`
   height: 100%;
   box-sizing: border-box;
   border-radius: 10px;
+  transition: ease all .1s;
   ${(props) => (props.padding ? `padding: ${props.padding};` : "")}
   ${(props) => (props.margin ? `margin: ${props.margin};` : "")}
   ${(props) => (props.bg ? `background-color: ${props.bg};` : "")}

@@ -37,13 +37,10 @@ const PostList = (props) => {
             >
               {post_list.map((p, idx) => {
                 if (p.user_info.user_id === user_info?.uid) {
+                  //im_me를 post안에서는 false로하고 밖에서 조건을 줘서 나인지아닌지를 판별!
                   return (
                     <Grid
-                    
                       key={p.id}
-                      // _onClick={() => {
-                      //   history.push(`/post/${p.id}`);
-                      // }}
                     >
                       <Post key={p.id} {...p} is_me />
                     </Grid>
@@ -53,10 +50,6 @@ const PostList = (props) => {
                   return (
                     <Grid
                       key={p.id}
-                      
-                      // _onClick={() => {
-                      //   history.push(`/post/${p.id}`);
-                      // }}
                     >
                       <Post {...p} />
                     </Grid>

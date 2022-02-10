@@ -5,6 +5,7 @@ import CommentWrite from "../components/CommentWrite";
 
 import { useSelector, useDispatch } from "react-redux";
 import { actionCreators as postActions } from "../redux/modules/post";
+import { ListGrid } from "../elements";
 
 const PostDetail = (props) => {
     const id = props.match.params.id;
@@ -28,11 +29,13 @@ const PostDetail = (props) => {
     return (
         <React.Fragment>
             {post && (
-                <Post {...post} is_me={post.user_info.user_id === user_info?.uid }/>
+                <Post {...post} is_me={ post.user_info.user_id === user_info?.uid }/>
             )}
             {/* post가 있을때에만 */}
+            <ListGrid width="50%" margin="20px auto" bg="Olive">
             <CommentWrite post_id={id} />
             <CommentList post_id={id} />
+            </ListGrid>
         </React.Fragment>
     )
 }

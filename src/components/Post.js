@@ -1,91 +1,43 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Grid, Image, Text, Button, ListGrid } from "../elements";
 import { history } from "../redux/configureStore";
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators as postActions } from "../redux/modules/post";
-import { realtime } from "../shared/firebase"
-import firebase from "firebase/compat/app";
+// import { actionCreators as likeActions } from "../redux/modules/like";
 import styled from "styled-components";
 
 const Post = (props) => {
   const dispatch = useDispatch();
   const is_login = useSelector((state) => state.user.is_login);
-  // const [is_read, setIsRead] = React.useState(true)
   const _display = useSelector((state) => state.post.list)
- 
+
+  //post id 찾기
+
   let idx = _display.findIndex((p) => p.id === props.id);
   const display = _display[idx].display
-  console.log(display)
+  
   const deletePost = () => {
     dispatch(postActions.deletePostFB(props.id))
   }
- 
+
   const like = () => {
-    if (!is_login) {
-      alert("로그인을 해주세요!")
-    }
-    
+  
     dispatch(postActions.commentLikeFB(props.id))
+    // dispatch(likeActions.addLikeFB(props.id))
   }
+  console.log(_display[idx].completed)
 
   const [state, setState] = useState(true);
-  
+
   const toggle = () => {
-      setState(!state)
-    }
-    if(display==="하단에 이미지 상단에 텍스트") {
-      return(
-        <React.Fragment>
-        <ListGrid width="50%" margin="20px auto 0px auto" bg="#CFB997" >
-          <Grid is_flex padding="16px">
-            <Grid is_flex width="auto">
-              <Image shape="circle" src={props.src} />
-              <Text bold>{props.user_info.user_name}</Text>
-            </Grid>
-            <Grid is_flex width="auto">
-              {props.is_me && (<Button width="auto" padding="4px"
-                //porps_is_me는 default로 지정!
-                margin="4px" _onClick={() => { history.push(`/write/${props.id}`) }}>수정</Button>)}
-              {props.is_me && (<Button width="auto" padding="4px"
-                margin="4px" _onClick={deletePost}>삭제</Button>)}
-              <Text>{props.insert_dt}</Text>
-            </Grid>
-          </Grid>
-          
-          
-          <Grid padding="16px">
-            <Text>{props.contents}</Text>
-          </Grid>
-          
-          <Grid padding="10px">       
-          <Style>
-              <Image
-                margin="10px 0px 0px 0px"
-                shape="rectangle"
-                width="100%"
-                src={props.image_url}
-              />
-          </Style>
-          </Grid>
-         
-         
-         <Grid padding="16px">
-            <Text margin="0px" bold>댓글 {props.comment_cnt}개</Text>
-            <Text margin="0px" bold>좋아요 {props.comment_like}개</Text>
-            <Button margin="0px" bold _onClick={()=>{
-              like()
-              toggle()
-              }}>{state ? `like`:`unlike`}</Button>
-           
-          </Grid>
-        </ListGrid>
-      </React.Fragment>
-      )
-    }
     
-    if(display==="왼쪽 이미지 오른쪽 텍스트"){
-      return(
-        <React.Fragment>
+    setState(!state)
+  }
+
+  //"하단에 이미지 상단에 텍스트"
+  if (display === "하단에 이미지 상단에 텍스트") {
+    return (
+      <React.Fragment>
         <ListGrid width="50%" margin="20px auto 0px auto" bg="#CFB997" >
           <Grid is_flex padding="16px">
             <Grid is_flex width="auto">
@@ -101,38 +53,110 @@ const Post = (props) => {
               <Text>{props.insert_dt}</Text>
             </Grid>
           </Grid>
-          
-          
+
+          {/* 누르면상세페이지 */}
+          <Grid key={props.id}
+            _onClick={() => {
+              history.push(`/post/${props.id}`);
+            }}>
+            <Grid padding="16px">
+              <Text>{props.contents}</Text>
+            </Grid>
+
+            <Grid padding="10px">
+              <Style>
+                <Image
+                  margin="10px 0px 0px 0px"
+                  shape="rectangle"
+                  width="100%"
+                  src={props.image_url}
+                />
+              </Style>
+            </Grid>
+          </Grid>
+
           <Grid padding="16px">
-            <Text>{props.contents}</Text>
-          </Grid>
-          <Grid padding="10px">       
-          <Style>
-              <Image
-                margin="10px 0px 0px 0px"
-                shape="rectangle"
-                width="50%"
-                src={props.image_url}
-              />
-          </Style>
-          </Grid>
-         
-         
-         <Grid padding="16px">
             <Text margin="0px" bold>댓글 {props.comment_cnt}개</Text>
             <Text margin="0px" bold>좋아요 {props.comment_like}개</Text>
-            <Button margin="0px" bold _onClick={()=>{
+            {is_login ? (
+            <Button margin="0px" bold _onClick={() => {
               like()
               toggle()
-              }}>{state ? `like`:`unlike`}</Button>
-           
+            }}>{state ? `like` : `unlike`}</Button>
+          ) : (
+            <Button margin="0px" bold _onClick={() => {
+              alert("로그인을 해주세요!")
+            }}>{`like`}</Button>
+          )}
           </Grid>
         </ListGrid>
       </React.Fragment>
-      )
-     
-    }
+    )
+  }
+
+  //"왼쪽 이미지 오른쪽 텍스트"
+  if (display === "왼쪽 이미지 오른쪽 텍스트") {
     return (
+      <React.Fragment>
+        <ListGrid width="50%" margin="20px auto 0px auto" bg="#CFB997" >
+          <Grid is_flex padding="16px">
+            <Grid is_flex width="auto">
+              <Image shape="circle" src={props.src} />
+              <Text bold>{props.user_info.user_name}</Text>
+            </Grid>
+            <Grid is_flex width="auto">
+              {props.is_me && (<Button width="auto" padding="4px"
+                //porps_is_me는 default로 지정!
+                margin="4px" _onClick={() => { history.push(`/write/${props.id}`) }}>수정</Button>)}
+              {props.is_me && (<Button width="auto" padding="4px"
+                margin="4px" _onClick={deletePost}>삭제</Button>)}
+              <Text>{props.insert_dt}</Text>
+            </Grid>
+          </Grid>
+
+          {/* 누르면 상세페이지 */}
+          <Grid key={props.id}
+            _onClick={() => {
+              history.push(`/post/${props.id}`);
+            }}>
+            <Grid padding="16px">
+              <Text>{props.contents}</Text>
+            </Grid>
+            <Grid padding="10px">
+              <Style>
+                <Image
+                  margin="10px 0px 0px 0px"
+                  shape="rectangle"
+                  width="50%"
+                  src={props.image_url}
+                />
+              </Style>
+            </Grid>
+          </Grid>
+
+          <Grid padding="16px">
+            <Text margin="0px" bold>댓글 {props.comment_cnt}개</Text>
+            <Text margin="0px" bold>좋아요 {props.comment_like}개</Text>
+            {is_login ? (
+            <Button margin="0px" bold _onClick={() => {
+              like()
+              toggle()
+            }}>{state ? `like` : `unlike`}</Button>
+          ) : (
+            <Button margin="0px" bold _onClick={() => {
+              alert("로그인을 해주세요!")
+            }}>{`like`}</Button>
+          )}
+
+          </Grid>
+        </ListGrid>
+      </React.Fragment>
+    )
+
+  }
+
+  //"오른쪽이미지 왼쪽 텍스트"
+  return (
     <React.Fragment>
       <ListGrid width="50%" margin="20px auto 0px auto" bg="#CFB997" >
         <Grid is_flex padding="16px">
@@ -149,32 +173,42 @@ const Post = (props) => {
             <Text>{props.insert_dt}</Text>
           </Grid>
         </Grid>
-        
-        
+
+        {/* 누르면 상세페이지 */}
+        <Grid key={props.id}
+          _onClick={() => {
+            history.push(`/post/${props.id}`);
+          }}>
+          <Grid padding="16px">
+            <Text>{props.contents}</Text>
+          </Grid>
+          <Grid padding="10px">
+            <Style>
+              <Image
+                margin="10px 0px 0px 0px"
+                marginLeft="auto"
+                shape="rectangle"
+                width="50%"
+                src={props.image_url}
+              />
+            </Style>
+          </Grid>
+        </Grid>
+
         <Grid padding="16px">
-          <Text>{props.contents}</Text>
-        </Grid>
-        <Grid padding="10px">       
-        <Style>
-            <Image
-              margin="10px 0px 0px 0px"
-              marginLeft="auto"
-              shape="rectangle"
-              width="50%"
-              src={props.image_url}
-            />
-        </Style>
-        </Grid>
-       
-       
-       <Grid padding="16px">
           <Text margin="0px" bold>댓글 {props.comment_cnt}개</Text>
           <Text margin="0px" bold>좋아요 {props.comment_like}개</Text>
-          <Button margin="0px" bold _onClick={()=>{
-            like()
-            toggle()
-            }}>{state ? `like`:`unlike`}</Button>
-         
+
+          {is_login ? (
+           <Button  margin="0px" bold _onClick={() => {
+              like()
+              toggle()
+            }}>{state ? `like` : `unlike`}</Button>
+          ) : (
+            <Button margin="0px" bold _onClick={() => {
+              alert("로그인을 해주세요!")
+            }}>{`like`}</Button>
+          )}
         </Grid>
       </ListGrid>
     </React.Fragment>
@@ -193,7 +227,7 @@ Post.defaultProps = {
   is_me: false,
 };
 
-const Style= styled.div`
+const Style = styled.div`
   width: 100%;
   minHeight: 150px;
   boxSizing: border-box;

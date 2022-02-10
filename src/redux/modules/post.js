@@ -5,7 +5,7 @@ import firebase from "firebase/compat/app";
 import "moment";
 import moment from "moment";
 import { actionCreators as imageActions } from "./image";
-import { update } from "lodash";
+
 
 
 const SET_POST = "SET_POST";
@@ -55,6 +55,7 @@ const commentLikeFB = (post_id) => {
       return b.id === post_id;
     })
     const post_completed = getState().post.list[post_index].completed
+  
 
     const increment = firebase.firestore.FieldValue.increment(1);
     const decrement = firebase.firestore.FieldValue.increment(-1);
@@ -63,33 +64,34 @@ const commentLikeFB = (post_id) => {
     const post = getState().post.list.find((l) => l.id === post_id);
   
     const postDB = firestore.collection("post");
- 
-    if (post_completed === false) {
-      postDB
-      .doc(post_id)
-      .update({ comment_like: increment, completed:false })
-      .then(()=>{
-        dispatch(
-          likePost(_post_idx, post_completed, {
-            comment_like: parseInt(post.comment_like) + 1,
-            completed: true
-          })
-        );
-      })
-    }
-    else {
-      postDB
-      .doc(post_id)
-      .update({ comment_like: decrement, completed:true})
-      .then(()=>{
-        dispatch(
-          likePost(_post_idx, post_completed, {
-            comment_like: parseInt(post.comment_like) - 1,
-            completed: false
-          })
-        );
-      })
-    }
+
+    
+      if (post_completed === true) {
+        postDB
+        .doc(post_id)
+        .update({ comment_like: increment, completed:false})
+        .then(()=>{
+          dispatch(
+            likePost(_post_idx,  {
+              comment_like: parseInt(post.comment_like) + 1,
+              completed: false
+            })
+          );
+        })
+      }
+      else {
+        postDB
+        .doc(post_id)
+        .update({ comment_like: decrement, completed:true})
+        .then(()=>{
+          dispatch(
+            likePost(_post_idx,  {
+              comment_like: parseInt(post.comment_like) - 1,
+              completed: true
+            })
+          );
+        })
+      }
   }
 };
 
@@ -123,8 +125,6 @@ const editPostFB = (post_id = null, post = {}) => {
 
     const _post_idx = getState().post.list.findIndex((p) => p.id === post_id);
     const _post = getState().post.list[_post_idx];
-
-
 
     const postDB = firestore.collection("post");
 
@@ -359,7 +359,6 @@ export default handleActions(
     [EDIT_POST]: (state, action) =>
       produce(state, (draft) => {
         let idx = draft.list.findIndex((p) => p.id === action.payload.post_id);
-
         draft.list[idx] = { ...draft.list[idx], ...action.payload.post };
       }),
     [LOADING]: (state, action) =>
@@ -376,16 +375,14 @@ export default handleActions(
       }),
     [LIKE]: (state, action) =>
       produce(state, (draft) => {
-        console.log(action.payload)
+       
         let idx = action.payload.post_index
-
-        if (action.payload.completed === true) {
+        console.log(action.payload)
+        if (action.payload.completed === false) {
           draft.list[idx] = { ...draft.list[idx], ...action.payload.comment_like, ...action.payload.completed };
         } else {
           draft.list[idx] = { ...draft.list[idx], ...action.payload.comment_like, ...action.payload.completed };
         }
-
-
       }),
   },
   initialState

@@ -38,6 +38,7 @@ const addCommentFB = (post_id, contents) => {
         commentDB.add(comment).then((doc) => {
             const postDB = firestore.collection("post");
             comment = { ...comment, id: doc.id };
+            //문서 id추가
 
             const post = getState().post.list.find((l) => l.id === post_id);
 
@@ -73,6 +74,7 @@ const getCommentFB = (post_id = null) => {
 
         // where로 게시글 id가 같은 걸 찾고,
         // orderBy로 정렬해줍니다.
+        // 댓글이 post_id를 찾아야하고 insert_dt 필터링을 해야하는데 그러러면 복합쿼리라는것을 사용해야함
         commentDB
             .where("post_id", "==", post_id)
             .orderBy("insert_dt", "desc")
@@ -100,6 +102,7 @@ export default handleActions(
                 draft.list[action.payload.post_id] = action.payload.comment_list;
             }),
         [ADD_COMMENT]: (state, action) => produce(state, (draft) => {
+          
             draft.list[action.payload.post_id].push(action.payload.comment);
         }),
         [LOADING]: (state, action) =>
